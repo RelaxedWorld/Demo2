@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<!-- Head -->
+<head>
+
+    <title>欢迎大家使用我的博客</title>
+
+    <!-- Meta-Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- //Meta-Tags -->
+
+    <!-- Custom-Styleheet-Links -->
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="all">
+    <link rel="stylesheet" href="css/animate-custom.css" type="text/css" media="all">
+    <!-- //Custom-Styleheet-Links -->
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" type="text/css"
+          media="all">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Montserrat:400,700" type="text/css" media="all">
+    <!-- //Fonts -->
+
+</head>
+<!-- //Head -->
+
+
+<!-- Body -->
+<body>
+
+<h1 class="agileits">MY BLOG SIGN IN FORM</h1>
+
+<div class="container agileits">
+
+    <div class="content-left agileits">
+        <img src="images/background.jpg" alt="Agileits">
+        <p>加深自己对技术的理解，<br>结交更多的朋友，<br>记录自己的技术轨迹，<br>分享让世界更美好。</p>
+        <div class="list agileits">
+            <ul class="agileits">
+                <li class="agileits"><a href="#">About</a></li>
+                <li class="li2 agileits"><a href="#">Terms Of Use</a></li>
+                <li class="agileits"><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content-right agileits">
+        <section>
+            <div id="container_demo">
+                <a class="hiddenanchor agileits" id="tologin"></a>
+                <a class="hiddenanchor agileits" id="toregister"></a>
+                <div id="wrapper">
+                    <div id="loginForm" class="animate agileits form">
+                        <h2 class="agileits">用户登录</h2>
+                        <form action="#" autocomplete="on" method="post">
+                            <label>Public Key</label>
+                            <textarea id="pubkey" rows="15" cols="65">MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJ5fgnYfxPTaCf+91XfECAUikpDekuFNt/5M60fZHSKIj4IqimH6iekvfhXeSuTzV2FVU9FeYAgI2xRpYR5EfRUCAwEAAQ==</textarea><br/>
+
+                            <label>用户名</label>
+                            <input type="text" id="userName" name="userName" required="">
+                            <label>密码</label>
+                            <input type="password" id="userPwd" name="userPwd" required="">
+
+                            <p><a href="#">忘记密码?</a></p>
+                            <input type="button" value="登录" onclick="testlogin()">
+
+                        </form>
+                        <p class="change_link agileits">
+                            还没有账户? <a href="#toregister" class="to_register">注册!</a>
+                        </p>
+                        <div class="clear"></div>
+                        <div class="social-icons agileits">
+                            <p>使用第三方登录</p>
+                            <ul>
+                                <li class="fb w3ls agileits"><a href="#"><span class="icons agileits"></span><span
+                                        class="text agileits">Facebook</span></a></li>
+                                <li class="twt w3ls agileits"><a href="#"><span class="icons agileits"></span><span
+                                        class="text agileits">Twitter</span></a></li>
+                                <div class="clear"></div>
+                            </ul>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div id="register" class="animate agileits form">
+                        <h2>用户注册</h2>
+                        <form action="#" autocomplete="on" method="post">
+                            <form action="#" method="post">
+                                <label>用户名</label>
+                                <input type="text" class="name agileits" Name="Name" required="">
+                                <label>手机号</label>
+                                <input type="text" class="phone agileits" Name="Phone Number" required="">
+                                <label>邮箱</label>
+                                <input type="text" Name="Email" required="">
+                                <label>密码</label>
+                                <input type="password" Name="Password" required="">
+                                <div class="send-button agileits">
+                                    <form action="#" method="post">
+                                        <input type="submit" value="注册">
+                                    </form>
+                                </div>
+                            </form>
+                            <p class="change_link agileits">
+                                已有账户? <a href="#tologin" class="to_register">登录</a>
+                            </p>
+                            <div class="clear"></div>
+                        </form>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="clear"></div>
+
+</div>
+
+<div class="footer agileits">
+    <p> &copy; 2016 Travel Agency Sign In Form. All Rights Reserved | Template by <a href="http://www.smallseashell.com"
+                                                                                     target="_blank">小贝壳网站模板</a></p>
+</div>
+<script type="text/javascript" src="js/jsencrypt.js"></script>
+<script type="text/javascript" src="js/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+    function testlogin() {
+        var data = [];
+        data['userName'] = $('#userName').val();
+        data['userPwd'] = $('#userPwd').val();
+        var pkey = $('#pubkey').val();
+        encryptRequest('/login', data, pkey);
+    }
+    // 使用jsencrypt类库加密js方法，
+    function encryptRequest(reqUrl, data, publicKey) {
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(publicKey);
+        // ajax请求发送的数据对象
+        var sendData = new Object();
+        // 将data数组赋给ajax对象
+        for (var key in data) {
+            sendData[key] = encrypt.encrypt(data[key]);
+        }
+        console.log(sendData);
+        $.ajax({
+            url: reqUrl,
+            type: 'post',
+            data: sendData,
+            dataType: 'json',
+            success: function (data) {
+                console.info(data);
+                alert(data)
+            },
+            error: function (xhr) {
+                //console.error('出错了');
+                console.error('出错了');
+                alert(xhr)
+            }
+        });
+    }
+</script>
+</body>
+<!-- //Body -->
+
+</html>
