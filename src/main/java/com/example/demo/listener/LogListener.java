@@ -3,6 +3,7 @@ package com.example.demo.listener;
 import com.example.demo.listener.event.OperateLogEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,9 +13,22 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class LogListener {
+    //声明一个异步任务,不加这句话会阻塞主要任务
+    @Async
     @EventListener
     public void saveOperateLog(OperateLogEvent operateLogEvent) {
         log.info("记录操作日志");
+        //休眠10秒钟测试异步效果
+        sleep(10);
+        log.info("记录操作日志完成");
         log.info(operateLogEvent.getOperateLog().toString());
+    }
+
+    private void sleep(Integer seconds) {
+        try {
+            Thread.sleep(1000 * seconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

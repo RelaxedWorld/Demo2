@@ -7,6 +7,7 @@ import com.example.demo.domains.User;
 import com.example.demo.listener.event.OperateLogEvent;
 import com.example.demo.mq.Producer;
 import com.example.demo.utils.RSAUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/")
+@Slf4j
 public class EmailController {
     @Autowired
     private Producer producer;
@@ -51,7 +53,7 @@ public class EmailController {
         operateLog.setOperateType(1);//测试
         operateLog.setContent("测试日志");
         saveOperateLog(operateLog);
-        System.out.println("邮件发送成功，日志记录成功");
+        log.info("邮件发送成功，日志记录成功");
         return "发送成功...";
     }
 
