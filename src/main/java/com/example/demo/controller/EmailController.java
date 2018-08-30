@@ -2,16 +2,21 @@ package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.domains.EmailMessage;
+import com.example.demo.domains.OperateLog;
 import com.example.demo.domains.User;
+import com.example.demo.listener.event.OperateLogEvent;
 import com.example.demo.mq.Producer;
 import com.example.demo.utils.RSAUtils;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.jms.Destination;
+import javax.servlet.http.HttpServletRequest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.HashMap;
@@ -23,9 +28,12 @@ import java.util.Map;
 public class EmailController {
     @Autowired
     private Producer producer;
+    @Resource
+    private ApplicationEventPublisher publisher;                    // 事件发布器
 
     @GetMapping("sendEmail")
-    public String sendEmail() {
+    public String sendEmail(HttpServletRequest request) {
+        //1.通过mq异步发送邮件
         Map params = new HashMap();
         params.put("id", 2);
         EmailMessage emailMessage = new EmailMessage();
@@ -35,6 +43,15 @@ public class EmailController {
         emailMessage.setParams(params);
         Destination destination = new ActiveMQQueue("email.queue");
         producer.sendMessage(destination, JSON.toJSONString(emailMessage));
+        //2.通过java事件引擎异步记录日志
+        OperateLog operateLog = new OperateLog();
+        operateLog.setBusinessId(123L);
+        operateLog.setOpetater("admin");
+        operateLog.setUserIp(request.getRemoteHost());
+        operateLog.setOperateType(1);//测试
+        operateLog.setContent("测试日志");
+        saveOperateLog(operateLog);
+        System.out.println("邮件发送成功，日志记录成功");
         return "发送成功...";
     }
 
@@ -54,5 +71,11 @@ public class EmailController {
             return "用户不存在哦";
         }
         return "";
+    }
+
+    private void saveOperateLog(OperateLog operateLog) {
+        OperateLogEvent event = new OperateLogEvent(this);
+        event.setOperateLog(operateLog);
+        publisher.publishEvent(event);
     }
 }
